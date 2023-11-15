@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: add
+  labels:
+    name: add
+spec:
+  selector:
+    matchLabels:
+      name: add
+  template:
+    metadata:
+      labels:
+        name: add
+    spec:
+      containers:
+        - name: add
+          image: calc/add
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3000
