@@ -1,0 +1,74 @@
+version: "3"
+
+services:
+  parser:
+    build: services/parser
+    image: ${IMAGE_PREFIX}-parser
+    environment:
+      ADD_HOST: add
+      ADD_PORT: 3000
+      ADD_URI: /api/v1/add
+
+      SUB_HOST: sub
+      SUB_PORT: 8000
+      SUB_URI: /api/v1/sub
+
+      DIV_HOST: div
+      DIV_PORT: 5000
+      DIV_URI: /api/v1/div
+
+      MULT_HOST: mult
+      MULT_PORT: 8080
+      MULT_URI: /api/v1/mult
+
+      POW_HOST: pow
+      POW_PORT: 3000
+      POW_URI: /api/v1/pow
+
+      MOD_HOST: mod
+      MOD_PORT: 8080
+      MOD_URI: /api/v1/mod
+    ports:
+      - 8080:8080
+    depends_on:
+      - add
+      - sub
+      - div
+      - mult
+      - pow
+      - mod
+  add:
+    build: services/add
+    image: ${IMAGE_PREFIX}-add
+    environment:
+      DEBUG: "express*,app"
+  sub:
+    build: services/sub
+    image: ${IMAGE_PREFIX}-sub
+  div:
+    build: services/div
+    image: ${IMAGE_PREFIX}-div
+  mult:
+    build: services/mult
+    image: ${IMAGE_PREFIX}-mult
+    environment:
+      GIN_MODE: debug
+  pow:
+    build: services/pow
+    image: ${IMAGE_PREFIX}-pow
+    environment:
+      DEBUG: "express*,app"
+      MULT_ENDPOINT: "http://mult:8080/api/v1/mult"
+    depends_on:
+      - mult
+  mod:
+    build: services/mod
+    image: ${IMAGE_PREFIX}-mod
+    environment:
+      MC_MULT_ENDPOINT: "http://mult:8080/api/v1/mult"
+      MC_DIV_ENDPOINT: "http://div:5000/api/v1/div"
+      MC_SUB_ENDPOINT: "http://sub:8000/api/v1/sub"
+    depends_on:
+      - mult
+      - div
+      - sub
